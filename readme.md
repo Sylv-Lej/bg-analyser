@@ -1,7 +1,7 @@
 # installation
 ```
 git clone https://github.com/Sylv-Lej/bg-analyser.git
-cd bg-analyser
+cd bg-analyser-main
 pip install -r requirements.txt
 ```
 # run
