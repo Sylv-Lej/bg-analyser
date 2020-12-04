@@ -8,34 +8,7 @@ import numpy as np
 import random
 import pickle
 
-def train(numGames=1):
-    gamma = 0.7
-    alpha = 0.1
-    numFeats = (game.NUMCOLS*4+3)*2
-    numHidden = 50
-    scales = [np.sqrt(6./(numFeats+numHidden)), np.sqrt(6./(1+numHidden))]
-    weights = [scales[0]*np.random.randn(numHidden,numFeats),scales[1]*np.random.randn(1,numHidden),
-               np.zeros((numHidden,1)),np.zeros((1,1))]    
-    for it in range(numGames):
 
-        g = game.Game(game.LAYOUT)
-        players = [aiAgents.TDAgent(g.players[0],weights,gamma,True), 
-                   aiAgents.TDAgent(g.players[1],weights)]
-
-        winner = run_game(players,g)
-
-        print ("Game : %d/%d"%(it,numGames))
-
-        updates = players[0].computeUpdate(winner)
-        for w,update in zip(weights,updates):
-            w += alpha*update
-        if it%100 == 0:
-            # save weights
-            fid = open("weights.bin",'w')
-            pickle.dump(weights,fid)
-            fid.close()
-
-    return weights
 
 def test(players,numGames=100,draw=False):
     winners = [0,0]
@@ -72,7 +45,7 @@ def run_game(players,g,draw=False):
             time.sleep(.02)
     return g.winner()
 
-def run_game_agent(players,g,dice_tuple, draw=False):
+def run_game_agent(players,g,dice_tuple, draw=True):
     g.new_game()
     playernum = 0
     over = False
@@ -93,8 +66,8 @@ def run_game_agent(players,g,dice_tuple, draw=False):
         # if draw:
         #     g.draw(roll)
         if draw:
-            time.sleep(800)
-        
+            time.sleep(3)
+
     return g.winner()
 
 # def run_step(players, g, dice_tuple, draw=False):
@@ -169,17 +142,21 @@ def load_weights(weights):
     return weights
 
 def parse_layout(layout_str):
-    game_layout = layout_str.split("^")[0]
+    game_and_bar_layout = layout_str.split("^")[0]
+
+    game_layout = game_and_bar_layout.split("=")[0]
+
+    bar_layout = game_and_bar_layout.split("=")[1]
 
     dice = layout_str.split("^")[1]
 
     dice_tuple = int(dice.split('-')[0]), int(dice.split('-')[1])
 
-    return game_layout, dice_tuple
+    return game_layout,bar_layout, dice_tuple
 
 def getAiChoice(players, layout, draw=False):
-    game_layout, dice_tuple = parse_layout(layout)
-    g = game.Game(game_layout)
+    game_layout, bar_layout, dice_tuple = parse_layout(layout)
+    g = game.Game(game_layout, bar_layout)
 
     winner = run_game_agent(players, g, dice_tuple, draw)
 
@@ -205,11 +182,17 @@ def runAIStep():
     # layout= "2-2-x,4-3-o,5-3-o,7-3-o,9-1-o,11-2-x,12-4-o,15-1-x,16-2-x,17-3-x,18-5-x,21-1-o^5-1"
 
     # hard real 2
-    layout= "0-1-x,1-2-x,2-1-x,3-2-x,4-3-x,5-2-x,7-2-o,12-2-x,17-2-o,18-4-o,19-2-x,20-2-o,21-1-o,22-2-o,23-2-o^5-6"
+    # layout= "0-1-x,1-2-x,2-1-x,3-2-x,4-3-x,5-2-x,7-2-o,12-2-x,17-2-o,18-4-o,19-2-x,20-2-o,21-1-o,22-2-o,23-2-o^5-6"
 
     # base layout black
     # layout = "0-2-o,5-5-x,7-3-x,11-5-o,12-5-x,16-3-o,18-5-o,23-2-x^3-1"
+    # layout = "0-2-o,5-5-x,7-3-x,11-5-o,12-5-x,16-3-o,18-5-o,23-1-x=1-x^3-1"
 
+    # black on bar
+    # layout = "0-6-o,3-12-x,5-24-x,7-18-x,9-3-o,11-32-o,12-24-x,13-1-o,16-10-o,18-24-o,19-12-o,21-4-x,23-6-x=6-o^4-3"
+    
+    # white on bar
+    layout = "0-2-x,3-2-x,5-2-x,6-2-x,7-1-x,11-4-o,12-2-x,15-1-x,16-2-o,17-2-o,18-4-o,19-2-x,20-2-o,23-1-x=1-x^5-4"
     getAiChoice([p1,p2],layout,draw=True)
 
 
@@ -259,8 +242,6 @@ def main(args=None):
     if(opts.agent_choice):
         runAIStep()
     else:
-        if opts.train:
-            weights = train()
 
         if opts.eval:
             weights = load_weights(weights)

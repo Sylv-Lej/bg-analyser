@@ -14,13 +14,14 @@ ON = 'on'
 
 class Game:
 
-    def __init__(self,layout=None,grid=None,offPieces=None,
+    def __init__(self,layout=None, bar_layout=None, grid=None,offPieces=None,
                  barPieces=None,numPieces=None,gPlayers=None):
         """
         Define a new game object
         """
         self.die = QUAD
         self.layout = layout
+        self.bar_layout = bar_layout
         if grid:
             self.grid = copy.deepcopy(grid)
             self.offPieces = copy.deepcopy(offPieces)
@@ -198,12 +199,43 @@ class Game:
         """
         Resets game to original layout.
         """
+        print("bar layout")
+        print(self.bar_layout)
+        if(self.bar_layout != None):
+            if("o" in self.bar_layout and "x" in self.bar_layout):
+                black_on_bar_nb = int(self.bar_layout.split("-")[0])
+                white_on_bar_nb = int(self.bar_layout.split("-")[2])
+
+                for piece in range(black_on_bar_nb):
+                    self.barPieces['x'].append("x")
+
+                for piece in range(white_on_bar_nb):
+                    self.barPieces['o'].append("o")
+
+            elif("o" in self.bar_layout):
+                white_on_bar_nb = int(self.bar_layout.split("-")[0])
+                for piece in range(white_on_bar_nb):
+                    self.barPieces['o'].append("o")
+            elif("x" in self.bar_layout):
+                black_on_bar_nb = int(self.bar_layout.split("-")[0])
+                for piece in range(black_on_bar_nb):
+                    self.barPieces['x'].append("x")
+
+            for p in self.players:
+                for piece in self.barPieces[p]:
+                    self.numPieces[piece] += 1
+
+        print("game initialised")
+        print("bar pieces")
+        print(self.barPieces)
+
         for col in self.layout.split(','):
             loc,num,token = col.split('-')
             self.grid[int(loc)] = [token for _ in range(int(num))]
         for col in self.grid:
             for piece in col:
                 self.numPieces[piece] += 1
+        
 
     def winner(self):
         """
@@ -342,14 +374,14 @@ class Game:
                 k = i-12
             self.gridLocs.append([(WOFFSET_TOP+k*WSKIP+mid,hoff+j*hskip) for j in range(6)])
         self.barLocs = {'x':[(376,142),(376,110)],'o':[(376,243),(376,275)]}
-        self.board_img = pygame.transform.scale(pygame.image.load('images/board.png'),size)
+        self.board_img = pygame.transform.scale(pygame.image.load('td_gammon/images/board.png'),size)
         self.screen = pygame.display.set_mode(self.board_img.get_rect().size)
-        self.tokIms = {'x':pygame.image.load('images/blackPiece.png'), \
-                           'o':pygame.image.load('images/whitePiece.png')}
-        self.dies = [pygame.transform.scale(pygame.image.load('images/die%d.png'%i),(35,35)) \
+        self.tokIms = {'x':pygame.image.load('td_gammon/images/blackPiece.png'), \
+                           'o':pygame.image.load('td_gammon/images/whitePiece.png')}
+        self.dies = [pygame.transform.scale(pygame.image.load('td_gammon/images/die%d.png'%i),(35,35)) \
                          for i in range(1,7)]
-        self.offIms = {'x':pygame.transform.scale(pygame.image.load('images/blackOff.png'),(40,18)), \
-                           'o':pygame.transform.scale(pygame.image.load('images/whiteOff.png'),(40,18))}
+        self.offIms = {'x':pygame.transform.scale(pygame.image.load('td_gammon/images/blackOff.png'),(40,18)), \
+                           'o':pygame.transform.scale(pygame.image.load('td_gammon/images/whiteOff.png'),(40,18))}
         
         outOff = 748
         bOffH = 391

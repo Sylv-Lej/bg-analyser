@@ -22,23 +22,83 @@ def extractFeatures(state):
     return np.array(features).reshape(-1,1)
 
 def getTrueValuesAction(action):
-    print(action)
-    if(action[0][1] == "off"):
-        if(action[1][1] == "off"):
-            action = ((action[0][0]+1),(action[0][1])),((action[1][0]+1),(action[1][1]))
-        else:
-            action = ((action[0][0]+1),(action[0][1])),((action[1][0]+1),(action[1][1]+1))
-    
-    if(action[1][1] == "off"):
-            action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1]))
-        else:
-            action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1]+1))
+    if(len(action)> 2):
+        # action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1] + 1)),((action[2][0]+1),(action[2][1] + 1)), ((action[3][0]+1),(action[3][1] + 1))
+        # action_r = ((1 + action[0][0], action[0][0])[ isinstance(action[0][0], str)],(1 + action[0][1], action[0][1])[ isinstance(action[0][1], str)]), ((1 + action[1][0], action[1][0])[ isinstance(action[1][0], str)],(1 + action[1][1], action[1][1])[ isinstance(action[1][1], str)]),((1 + action[2][0], action[2][0])[ isinstance(action[2][0], str)],(1 + action[2][1], action[2][1])[ isinstance(action[2][1], str)]), ((1 + action[3][0], action[3][0])[ isinstance(action[3][0], str)],(1 + action[3][1], action[3][1])[ isinstance(action[3][1], str)])
+        action_r = (action[0][0] if isinstance(action[0][0], str) else (action[0][0] + 1), \
+                    action[0][1] if isinstance(action[0][1], str) else (action[0][1] + 1)),\
+                    (action[1][0] if isinstance(action[1][0], str) else (action[1][0] + 1),\
+                     action[1][1] if isinstance(action[1][1], str) else (action[1][1] + 1)),\
+                    (action[2][0] if isinstance(action[2][0], str) else (action[2][0] + 1),\
+                     action[2][1] if isinstance(action[2][1], str) else (action[2][1] + 1)),\
+                    (action[3][0] if isinstance(action[3][0], str) else (action[3][0] + 1),\
+                     action[3][1] if isinstance(action[3][1], str) else (action[3][1] + 1))
 
-    return action
+        return action_r
+
+    # if(action[0][1] == "off"):
+    #     if(action[1][1] == "off"):
+    #         action = ((action[0][0]+1),(action[0][1])),((action[1][0]+1),(action[1][1]))
+    #     else:
+    #         action = ((action[0][0]+1),(action[0][1])),((action[1][0]+1),(action[1][1]+1))
+    # else:
+    #     if(action[1][1] == "off"):
+    #         action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1]))
+    #     else:
+    #         action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1]+1))
+    action_r = (action[0][0] if isinstance(action[0][0], str) else (action[0][0] + 1),  \
+                action[0][1] if isinstance(action[0][1], str) else (action[0][1] + 1)), \
+                (action[1][0] if isinstance(action[1][0], str) else (action[1][0] + 1), \
+                 action[1][1] if isinstance(action[1][1], str) else (action[1][1] + 1)) 
+    # action_r = ((action[0][0] + 1, action[0][0])[ isinstance(action[0][0], str)],
+    #             (action[0][1] + 1, action[0][1])[ isinstance(action[0][1], str)]), 
+    #             ((action[1][0] + 1, action[1][0])[ isinstance(action[1][0], str)],
+    #             (action[1][1] + 1, action[1][1])[ isinstance(action[1][1], str)]),
+
+    return action_r
+
+def addToAction(action, add_to_action):
+    if(len(action)> 2):
+        # action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1] + 1)),((action[2][0]+1),(action[2][1] + 1)), ((action[3][0]+1),(action[3][1] + 1))
+        # action_r = ((1 + action[0][0], action[0][0])[ isinstance(action[0][0], str)],(1 + action[0][1], action[0][1])[ isinstance(action[0][1], str)]), ((1 + action[1][0], action[1][0])[ isinstance(action[1][0], str)],(1 + action[1][1], action[1][1])[ isinstance(action[1][1], str)]),((1 + action[2][0], action[2][0])[ isinstance(action[2][0], str)],(1 + action[2][1], action[2][1])[ isinstance(action[2][1], str)]), ((1 + action[3][0], action[3][0])[ isinstance(action[3][0], str)],(1 + action[3][1], action[3][1])[ isinstance(action[3][1], str)])
+        action_r =  (action[0][0] if isinstance(action[0][0], str) else action[0][0] + add_to_action   \
+                    ,action[0][1] if isinstance(action[0][1], str) else action[0][1] + add_to_action), \
+                    (action[1][0] if isinstance(action[1][0], str) else action[1][0] + add_to_action,  \
+                     action[1][1] if isinstance(action[1][1], str) else action[1][1] + add_to_action), \
+                    (action[2][0] if isinstance(action[2][0], str) else action[2][0] + add_to_action,  \
+                     action[2][1] if isinstance(action[2][1], str) else action[2][1] + add_to_action), \
+                    (action[3][0] if isinstance(action[3][0], str) else action[3][0] + add_to_action,  \
+                     action[3][1] if isinstance(action[3][1], str) else action[3][1] + add_to_action)
+
+        return action_r
+
+    action_r = (action[0][0] if isinstance(action[0][0], str) else action[0][0] + add_to_action, \
+                action[0][1] if isinstance(action[0][1], str) else action[0][1] + add_to_action),\
+                (action[1][0] if isinstance(action[1][0], str) else action[1][0] + add_to_action,\
+                 action[1][1] if isinstance(action[1][1], str) else action[1][1] + add_to_action)
+
+    return action_r
 
 def getInverseAction(action):
-    action = ((25 - action[0][0]), (25 - action[0][1])), ((25 - action[1][0]), (25 - action[1][1]))
-    return action
+
+    if(len(action)> 2):
+        action_r = (action[0][0] if isinstance(action[0][0], str) else (25 - action[0][0]),  \
+                    action[0][1] if isinstance(action[0][1], str) else (25 - action[0][1])), \
+                    (action[1][0] if isinstance(action[1][0], str) else (25 - action[1][0]) ,\
+                     action[1][1] if isinstance(action[1][1], str) else (25 - action[1][1])),\
+                    (action[2][0] if isinstance(action[2][0], str) else (25 - action[2][0]), \
+                     action[2][1] if isinstance(action[2][1], str) else (25 - action[2][1])),\
+                    (action[3][0] if isinstance(action[3][0], str) else (25 - action[3][0]) ,\
+                     action[3][1] if isinstance(action[3][1], str) else (25 - action[3][1]))
+
+        return action_r
+
+    action_r = (action[0][0] if isinstance(action[0][0], str) else (25 - action[0][0])     \
+                , action[0][1] if isinstance(action[0][1], str) else (25 - action[0][1])), \
+                (action[1][0] if isinstance(action[1][0], str) else (25 - action[1][0]),   \
+                 action[1][1] if isinstance(action[1][1], str) else (25 - action[1][1]))
+
+    return action_r
 
 def truncate(number, digits):
     stepper = 10.0 ** digits
@@ -56,9 +116,6 @@ class TDAgent(agent.Agent, object):
         with no lookahead.
         """
         bestV = 0
-        print("TD Agent")
-        print(self.player)
-
         for a in actions:
             ateList = game.takeAction(a, self.player)
             features = extractFeatures((game,game.opponent(self.player)))
@@ -92,9 +149,11 @@ class TDAgent(agent.Agent, object):
             game.undoAction(a,  self.player, ateList)
         df_action_non_sorted = pd.DataFrame(actions_list.items(), columns=['coup', 'quote'])
         df_action_sorted = df_action_non_sorted.sort_values(by=['quote'], ascending=False)
-        return df_action_sorted.head()
+        df_action_drop_duplicated = df_action_sorted.drop_duplicates(subset=['quote'])
 
-def nnetEval(state,weights):
+        return df_action_drop_duplicated.head()
+
+def nnetEval(state, weights):
     w1,w2,b1,b2 = weights
     features = np.array(extractFeatures(state)).reshape(-1,1)
     hiddenAct = 1/(1+np.exp(-(w1.dot(features)+b1)))
@@ -148,6 +207,7 @@ class ExpectiMiniMaxAgent(agent.Agent, object):
             game.undoAction(a,self.player,ateList)
             outcomes.append((score, a))
         action = max(outcomes)[1]
+
         return action
 
 
