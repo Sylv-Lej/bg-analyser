@@ -1,6 +1,8 @@
 import time
-import game
-import agent, random, aiAgents
+import td_gammon.game as game
+import td_gammon.agent as agent
+import random
+import td_gammon.aiAgents as aiAgents
 import numpy as np
 import cPickle as pickle
 
@@ -16,14 +18,31 @@ def saveGames(gameData,fileNum):
     info.astype(np.int32).tofile(infoId)
     infoId.close()
 
+def load_weights(weights):
+    if weights is None:
+        try:
+            import pickle
+            # added
+            with open('weights-100k.bin', 'rb') as f:
+                weights = pickle.load(f, encoding='bytes')
+            # -- end added
+            # weights = pickle.load(open('weights-100k.bin','r'))
+        except IOError:
+            print ("You need to train the weights to use the better evaluation function")
+    return weights
+
 def train(numGames=100000):
     alpha = 1.0
     numFeats = (game.NUMCOLS*6+3)*2
     numHidden = 50
+
     scales = [np.sqrt(6./(numFeats+numHidden)), np.sqrt(6./(1+numHidden))]
     weights = [scales[0]*np.random.randn(numHidden,numFeats),scales[1]*np.random.randn(1,numHidden),
-               np.zeros((numHidden,1)),np.zeros((1,1))]    
-    players = [aiAgents.TDAgent(game.Game.TOKENS[0],weights), 
+               np.zeros((numHidden,1)),np.zeros((1,1))]
+
+    weights2 = load_weights(None)
+
+    players = [aiAgents.TDAgent(game.Game.TOKENS[0],weights2),
                aiAgents.TDAgent(game.Game.TOKENS[1],weights)]
 
     gameData = {'winners':[],'length':[],'feats':[]}
@@ -63,17 +82,17 @@ def train(numGames=100000):
         gameData['winners'].append(winner)
         gameData['length'].append(nt)
         if (it+1)%100==0:
-            saveGames(gameData,it/10000)
+            # saveGames(gameData,it/10000)
             gameData = {'winners':[],'length':[],'feats':[]}
-    
+
             print ("Game : %d/%d in %d turns"%(it,numGames,nt))
-    
+
             updateWeights(featsP,featsN,weights,alpha,w=winner)
-    
-        if (it%100 == 0):
+
+        if (it%10000 == 0):
                 # save weights
                 print("saving weights")
-                fid = open("weights%d.bin"%NUM,'w')
+                fid = open("weights-%d.bin"%it,'w')
                 pickle.dump(weights,fid)
                 fid.close()
 

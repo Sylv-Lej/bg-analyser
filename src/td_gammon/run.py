@@ -63,8 +63,8 @@ def run_game_agent(players,g,dice_tuple, draw=True):
 
         # if draw:
         #     time.sleep(5)
-        # if draw:
-        #     g.draw(roll)
+        if draw:
+            g.draw(roll)
         if draw:
             time.sleep(3)
 

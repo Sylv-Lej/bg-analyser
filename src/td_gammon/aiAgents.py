@@ -22,6 +22,11 @@ def extractFeatures(state):
     return np.array(features).reshape(-1,1)
 
 def getTrueValuesAction(action):
+    if(len(action) < 2 ):
+        action_r = (action[0][0] if isinstance(action[0][0], str) else (1 + action[0][0]),  \
+                    action[0][1] if isinstance(action[0][1], str) else (1 + action[0][1]))
+        return action_r
+
     if(len(action)> 2):
         # action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1] + 1)),((action[2][0]+1),(action[2][1] + 1)), ((action[3][0]+1),(action[3][1] + 1))
         # action_r = ((1 + action[0][0], action[0][0])[ isinstance(action[0][0], str)],(1 + action[0][1], action[0][1])[ isinstance(action[0][1], str)]), ((1 + action[1][0], action[1][0])[ isinstance(action[1][0], str)],(1 + action[1][1], action[1][1])[ isinstance(action[1][1], str)]),((1 + action[2][0], action[2][0])[ isinstance(action[2][0], str)],(1 + action[2][1], action[2][1])[ isinstance(action[2][1], str)]), ((1 + action[3][0], action[3][0])[ isinstance(action[3][0], str)],(1 + action[3][1], action[3][1])[ isinstance(action[3][1], str)])
@@ -58,6 +63,7 @@ def getTrueValuesAction(action):
     return action_r
 
 def addToAction(action, add_to_action):
+    
     if(len(action)> 2):
         # action = ((action[0][0]+1),(action[0][1] + 1)),((action[1][0]+1),(action[1][1] + 1)),((action[2][0]+1),(action[2][1] + 1)), ((action[3][0]+1),(action[3][1] + 1))
         # action_r = ((1 + action[0][0], action[0][0])[ isinstance(action[0][0], str)],(1 + action[0][1], action[0][1])[ isinstance(action[0][1], str)]), ((1 + action[1][0], action[1][0])[ isinstance(action[1][0], str)],(1 + action[1][1], action[1][1])[ isinstance(action[1][1], str)]),((1 + action[2][0], action[2][0])[ isinstance(action[2][0], str)],(1 + action[2][1], action[2][1])[ isinstance(action[2][1], str)]), ((1 + action[3][0], action[3][0])[ isinstance(action[3][0], str)],(1 + action[3][1], action[3][1])[ isinstance(action[3][1], str)])
@@ -80,7 +86,10 @@ def addToAction(action, add_to_action):
     return action_r
 
 def getInverseAction(action):
-
+    if(len(action) < 2 ):
+        action_r = (action[0][0] if isinstance(action[0][0], str) else (25 - action[0][0]),  \
+                    action[0][1] if isinstance(action[0][1], str) else (25 - action[0][1]))
+        return action_r
     if(len(action)> 2):
         action_r = (action[0][0] if isinstance(action[0][0], str) else (25 - action[0][0]),  \
                     action[0][1] if isinstance(action[0][1], str) else (25 - action[0][1])), \
@@ -145,8 +154,8 @@ class TDAgent(agent.Agent, object):
 
             actions_list[a_inverse] = truncate(v[0][0], 6)
 
-
             game.undoAction(a,  self.player, ateList)
+
         df_action_non_sorted = pd.DataFrame(actions_list.items(), columns=['coup', 'quote'])
         df_action_sorted = df_action_non_sorted.sort_values(by=['quote'], ascending=False)
         df_action_drop_duplicated = df_action_sorted.drop_duplicates(subset=['quote'])

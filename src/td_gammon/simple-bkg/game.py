@@ -98,7 +98,7 @@ class Game:
                 self.barPieces[bar_piece].append(bar_piece)
             self.grid[e].append(piece)
 
-    def getActions(self,roll,token):
+    def getActions(self, roll, token):
         """
         Get set of all possible move tuples
         """
@@ -112,12 +112,14 @@ class Game:
         offboarding = self.can_offboard(token)
         for r1,r2 in rolls:
             for i in range(len(self.grid)):
-                if self.is_valid_move(i,i+r1,token):
+                if self.is_valid_move(i, i+r1 , token):
                     move1 = (i,i+r1)
                     piece = self.grid[i].pop()
+
                     bar_piece = None
-                    if len(self.grid[i+r1])==1 and self.grid[i+r1][-1]!=token:
+                    if len(self.grid[i+r1])==1 and self.grid[i+r1][-1] != token:
                         bar_piece = self.grid[i+r1].pop()
+
                     self.grid[i+r1].append(piece)
                     self.get_second_move(token,r2,moves,move1)
                     self.grid[i+r1].pop()
@@ -218,9 +220,9 @@ class Game:
         Checks if the game is over.
         """
         for t in self.players:
-            if len(self.offPieces[t])+len(self.barPieces[t])==self.numPieces[t]:
+            if len(self.offPieces[t])+ len(self.barPieces[t]) == self.numPieces[t]:
                 return True
-         
+
         return False
 
 #### NO FUNCTIONS BELOW HERE SHOULD BE OF INTEREST ###

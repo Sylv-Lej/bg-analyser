@@ -37,7 +37,6 @@ class HumanAgent(Agent):
             # if no more moves we break
             if not movesLeft:
                 break
-
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
