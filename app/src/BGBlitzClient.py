@@ -23,17 +23,17 @@ class BgBlitzClient():
         print('Connexion vers ' + HOST + ':' + str(PORT) + ' reussie.')
 
     def getPrediction(self, layout, bar, out, dice):
-        nb_out = 3
-        if(dice[1]== dice [0]):
-            nb_out = 2
+        nb_out = 1
+        # if(dice[1]== dice [0]):
+        #     nb_out = 2
 
         msg_pred = """
         <?xml version="1.0" encoding="UTF-8" ?>
             <TutorRequest id='1234ab'>
               <comment>A comment describing the request, just for debugging</comment>
               <attr name="noise" value="0.05"/>
-              <attr name="cubeful" value="true"/>
-              <attr name="gammons" value="on"/>
+              <attr name="cubeful" value="false"/>
+              <attr name="gammons" value="off"/>
               <attr name="backgammons" value="off"/>
               <attr name="noOfMoves"   value="{}"/>        <!-- any value greater 0 -->
               <attr name="ply" value="2"/>                <!-- optional; if missing taking the value from setup -->
@@ -47,7 +47,7 @@ class BgBlitzClient():
                 <attr name="jacoby" value="true"/>
                 <attr name="beaver" value="true"/>
                 <attr name='board'>
-                  <board cube='1' cubeowner='green'>       <!-- cubeowner may be red,green or none -->
+                  <board cube='1' cubeowner='none'>       <!-- cubeowner may be red,green or none -->
                     <points>{}</points>
                     <bar red='{}' green='{}'/>              <!--optional if no checker on the bar -->
                     <off red='{}' green='{}'/>             <!--optional if no checker off -->
@@ -57,17 +57,22 @@ class BgBlitzClient():
             </TutorRequest>""".format(nb_out, dice[0], dice[1], layout, bar[0], - bar[1], out[0], - out[1])
 
         for i in range(10):
-            n = self.client.send(msg_pred.encode())
-            if (n != len(msg_pred)):
-                print ('Erreur sur la reception reconnection')
+            try:
+                n = self.client.send(msg_pred.encode())
+                if (n != len(msg_pred)):
+                    print ('Erreur sur la reception')
+                    self.connect()
+                else:
+                    break
+            except:
+                print ('Erreur sur l envoie')
                 self.connect()
-            else:
-                break
         # else:
         #     print ('Envoi ok.')
 
         donnees = self.client.recv(4096)
         # print ('Recu : {}'.format(donnees))
+        prob = 0
         try:
             root = ET.fromstring(donnees)
             for child in root:
@@ -76,19 +81,19 @@ class BgBlitzClient():
                     if(moove.tag == "movePart"):
                         print("{} -> {}".format(moove.attrib['from'], moove.attrib['to']))
                     if(moove.tag == "probabilities"):
+                        if(child.attrib['rank'] == '1'):
+                            prob = moove.attrib['greenWin']
                         print("Win chance : {} ".format(moove.attrib['greenWin']))
                     if(moove.tag == "moneyEquity"):
                         print("Equity    : {} ".format(moove.attrib['green']))
                 print()
+            return prob
         except:
             print('error parsing in XML')
-
-
-
-
+            self.connect()
+            return None
 
 # print('Envoi de : ' + msg_test)
-
 
 # if (n != len(message)):
 #         print ('Erreur envoi.')
