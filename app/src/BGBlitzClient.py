@@ -15,6 +15,9 @@ PORT = 12344
 
 class BgBlitzClient():
     def __init__(self):
+        self.connect()
+
+    def connect(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((HOST, PORT))
         print('Connexion vers ' + HOST + ':' + str(PORT) + ' reussie.')
@@ -53,31 +56,34 @@ class BgBlitzClient():
               </position>
             </TutorRequest>""".format(nb_out, dice[0], dice[1], layout, bar[0], - bar[1], out[0], - out[1])
 
-
-
         for i in range(10):
             n = self.client.send(msg_pred.encode())
             if (n != len(msg_pred)):
-                print ('Erreur sur l envoi.')
+                print ('Erreur sur la reception reconnection')
+                self.connect()
             else:
                 break
         # else:
         #     print ('Envoi ok.')
 
-        donnees = self.client.recv(1024)
-        print ('Recu : {}'.format(donnees))
+        donnees = self.client.recv(4096)
+        # print ('Recu : {}'.format(donnees))
+        try:
+            root = ET.fromstring(donnees)
+            for child in root:
+                print("Rank {}".format(child.attrib['rank']))
+                for moove in child:
+                    if(moove.tag == "movePart"):
+                        print("{} -> {}".format(moove.attrib['from'], moove.attrib['to']))
+                    if(moove.tag == "probabilities"):
+                        print("Win chance : {} ".format(moove.attrib['greenWin']))
+                    if(moove.tag == "moneyEquity"):
+                        print("Equity    : {} ".format(moove.attrib['green']))
+                print()
+        except:
+            print('error parsing in XML')
 
-        root = ET.fromstring(donnees)
 
-        for child in root:
-            print("Rank {}".format(child.attrib['rank']))
-            for moove in child:
-                if(moove.tag == "movePart"):
-                    print("{} -> {}".format(moove.attrib['from'], moove.attrib['to']))
-                # if(moove.tag == "probabilities"):
-                #     print("you : {} opponent : {}".format(moove.attrib['greenWin'], moove.attrib['redWin']))
-                if(moove.tag == "moneyEquity"):
-                    print("you : {} opponent : {}".format(moove.attrib['green'], moove.attrib['red']))
 
 
 
