@@ -45,7 +45,7 @@ def run_game(players,g,draw=False):
             time.sleep(.02)
     return g.winner()
 
-def run_game_agent(players,g,dice_tuple, draw=True):
+def run_game_agent(players, g, dice_tuple, draw=True):
     g.new_game()
     playernum = 0
     over = False
@@ -152,7 +152,7 @@ def parse_layout(layout_str):
 
     dice_tuple = int(dice.split('-')[0]), int(dice.split('-')[1])
 
-    return game_layout,bar_layout, dice_tuple
+    return game_layout, bar_layout, dice_tuple
 
 def getAiChoice(players, layout, draw=False):
     game_layout, bar_layout, dice_tuple = parse_layout(layout)
@@ -190,7 +190,7 @@ def runAIStep():
 
     # black on bar
     # layout = "0-6-o,3-12-x,5-24-x,7-18-x,9-3-o,11-32-o,12-24-x,13-1-o,16-10-o,18-24-o,19-12-o,21-4-x,23-6-x=6-o^4-3"
-    
+
     # white on bar
     layout = "0-2-x,3-2-x,5-2-x,6-2-x,7-1-x,11-4-o,12-2-x,15-1-x,16-2-o,17-2-o,18-4-o,19-2-x,20-2-o,23-1-x=1-x^5-4"
     getAiChoice([p1,p2],layout,draw=True)
@@ -261,14 +261,14 @@ def main(args=None):
             p1 = aiAgents.ExpectiMiniMaxAgent(game.Game.TOKENS[0], evalFn, evalArgs)
         elif opts.player1 == 'human':
             p1 = agent.HumanAgent(game.Game.TOKENS[0])
-    
+
         p2 = agent.RandomAgent(game.Game.TOKENS[1])
         # p2 = aiAgents.ExpectiMiniMaxAgent(game.Game.TOKENS[1],evalFn,evalArgs)
         if p1 is None:
             print ("Please specify legitimate player")
             import sys
             sys.exit(1)
-    
+
         test([p1,p2],numGames=int(opts.numgames),draw=opts.draw)
 
 if __name__=="__main__":

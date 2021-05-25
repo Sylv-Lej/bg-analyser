@@ -22,7 +22,7 @@ class BgBlitzClient():
         self.client.connect((HOST, PORT))
         print('Connexion vers ' + HOST + ':' + str(PORT) + ' reussie.')
 
-    def getPrediction(self, layout, bar, out, dice):
+    def predict(self, layout, bar, out, dice):
         nb_out = 1
         # if(dice[1]== dice [0]):
         #     nb_out = 2
@@ -31,7 +31,7 @@ class BgBlitzClient():
         <?xml version="1.0" encoding="UTF-8" ?>
             <TutorRequest id='1234ab'>
               <comment>A comment describing the request, just for debugging</comment>
-              <attr name="noise" value="0.05"/>
+              <attr name="noise" value="0."/>
               <attr name="cubeful" value="false"/>
               <attr name="gammons" value="off"/>
               <attr name="backgammons" value="off"/>
