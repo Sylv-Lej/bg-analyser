@@ -8,6 +8,8 @@ Created on Fri May 21 10:28:50 2021
 
 import socket
 import xml.etree.ElementTree as ET
+from art import text2art
+
 HOST = '65.21.184.121'
 PORT = 12344
 
@@ -31,7 +33,7 @@ class BgBlitzClient():
         <?xml version="1.0" encoding="UTF-8" ?>
             <TutorRequest id='1234ab'>
               <comment>A comment describing the request, just for debugging</comment>
-              <attr name="noise" value="0.05"/>
+              <attr name="noise" value="0.0"/>
               <attr name="cubeful" value="false"/>
               <attr name="gammons" value="off"/>
               <attr name="backgammons" value="off"/>
@@ -43,9 +45,9 @@ class BgBlitzClient():
                 <attr name='matchLength' value='0'/>       <!-- if matchLength is 0 then it is a money game -->
                 <attr name='whosOn' value='green'/>
                 <attr name='crawford' value='false'/>
-                <attr name='usecube' value='true'/>
-                <attr name="jacoby" value="true"/>
-                <attr name="beaver" value="true"/>
+                <attr name='usecube' value='false'/>
+                <attr name="jacoby" value="false"/>
+                <attr name="beaver" value="false"/>
                 <attr name='board'>
                   <board cube='1' cubeowner='none'>       <!-- cubeowner may be red,green or none -->
                     <points>{}</points>
@@ -79,7 +81,9 @@ class BgBlitzClient():
                 print("Rank {}".format(child.attrib['rank']))
                 for moove in child:
                     if(moove.tag == "movePart"):
-                        print("{} -> {}".format(moove.attrib['from'], moove.attrib['to']))
+                        art=text2art("{} - {}".format(moove.attrib['from'], moove.attrib['to']))
+                        print(art)
+                        # print("{} -> {}".format(moove.attrib['from'], moove.attrib['to']))
                     if(moove.tag == "probabilities"):
                         if(child.attrib['rank'] == '1'):
                             prob = moove.attrib['greenWin']
