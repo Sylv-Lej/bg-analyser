@@ -64,11 +64,13 @@ class BgBlitzClient():
                 if (n != len(msg_pred)):
                     print ('Erreur sur la reception')
                     self.connect()
+                    self.getPrediction(layout, bar, out, dice)
                 else:
                     break
             except:
                 print ('Erreur sur l envoie')
                 self.connect()
+                self.getPrediction(layout, bar, out, dice)
         # else:
         #     print ('Envoi ok.')
 
@@ -78,7 +80,7 @@ class BgBlitzClient():
         try:
             root = ET.fromstring(donnees)
             for child in root:
-                print("Rank {}".format(child.attrib['rank']))
+                # print("Rank {}".format(child.attrib['rank']))
                 for moove in child:
                     if(moove.tag == "movePart"):
                         art=text2art("{} - {}".format(moove.attrib['from'], moove.attrib['to']))
@@ -95,6 +97,7 @@ class BgBlitzClient():
         except:
             print('error parsing in XML')
             self.connect()
+            self.getPrediction(layout, bar, out, dice)
             return None
 
 # print('Envoi de : ' + msg_test)
