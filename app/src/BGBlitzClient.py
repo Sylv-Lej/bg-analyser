@@ -33,11 +33,7 @@ class BgBlitzClient():
             <?xml version="1.0" encoding="UTF-8" ?>
             <TutorRequest id='1234ab'>
               <comment>A comment describing the request, just for debugging</comment>
-<<<<<<< HEAD
-              <attr name="noise" value="0."/>
-=======
               <attr name="noise" value="0.0"/>
->>>>>>> main
               <attr name="cubeful" value="false"/>
               <attr name="gammons" value="off"/>
               <attr name="backgammons" value="off"/>
@@ -69,13 +65,13 @@ class BgBlitzClient():
                 if (n != len(msg_pred)):
                     print ('Erreur sur la reception, retrying')
                     self.connect()
-                    self.getPrediction(layout, bar, out, dice)
+                    self.predict(layout, bar, out, dice)
                 else:
                     break
             except:
                 print ("Erreur sur l'envoie, retrying")
                 self.connect()
-                self.getPrediction(layout, bar, out, dice)
+                self.predict(layout, bar, out, dice)
         else:
             print ('Envoi ok.')
 
@@ -85,7 +81,7 @@ class BgBlitzClient():
             root = ET.fromstring(donnees)
             if(root.tag == "Error"):
                 print("Error tag in response, retrying")
-                self.getPrediction(layout, bar, out, dice)
+                self.predict(layout, bar, out, dice)
             for child in root:
 
                 # print("Rank {}".format(child.attrib['rank']))
@@ -105,7 +101,7 @@ class BgBlitzClient():
         except:
             print('error parsing in XML')
             self.connect()
-            self.getPrediction(layout, bar, out, dice)
+            self.predict(layout, bar, out, dice)
             return None
 
 # print('Envoi de : ' + msg_test)
