@@ -1,2 +1,3 @@
 app/data/games
 *.bin
+**/.DS_Store

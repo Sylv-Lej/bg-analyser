@@ -8,6 +8,8 @@ Created on Fri May 21 10:28:50 2021
 
 import socket
 import xml.etree.ElementTree as ET
+from art import text2art
+
 HOST = '65.21.184.121'
 PORT = 12344
 
@@ -28,10 +30,14 @@ class BgBlitzClient():
         #     nb_out = 2
 
         msg_pred = """
-        <?xml version="1.0" encoding="UTF-8" ?>
+            <?xml version="1.0" encoding="UTF-8" ?>
             <TutorRequest id='1234ab'>
               <comment>A comment describing the request, just for debugging</comment>
+<<<<<<< HEAD
               <attr name="noise" value="0."/>
+=======
+              <attr name="noise" value="0.0"/>
+>>>>>>> main
               <attr name="cubeful" value="false"/>
               <attr name="gammons" value="off"/>
               <attr name="backgammons" value="off"/>
@@ -43,9 +49,9 @@ class BgBlitzClient():
                 <attr name='matchLength' value='0'/>       <!-- if matchLength is 0 then it is a money game -->
                 <attr name='whosOn' value='green'/>
                 <attr name='crawford' value='false'/>
-                <attr name='usecube' value='true'/>
-                <attr name="jacoby" value="true"/>
-                <attr name="beaver" value="true"/>
+                <attr name='usecube' value='false'/>
+                <attr name="jacoby" value="false"/>
+                <attr name="beaver" value="false"/>
                 <attr name='board'>
                   <board cube='1' cubeowner='none'>       <!-- cubeowner may be red,green or none -->
                     <points>{}</points>
@@ -56,30 +62,38 @@ class BgBlitzClient():
               </position>
             </TutorRequest>""".format(nb_out, dice[0], dice[1], layout, bar[0], - bar[1], out[0], - out[1])
 
+        # n = self.client.sendall(msg_pred.encode('utf-8'))
         for i in range(10):
             try:
                 n = self.client.send(msg_pred.encode())
                 if (n != len(msg_pred)):
-                    print ('Erreur sur la reception')
+                    print ('Erreur sur la reception, retrying')
                     self.connect()
+                    self.getPrediction(layout, bar, out, dice)
                 else:
                     break
             except:
-                print ('Erreur sur l envoie')
+                print ("Erreur sur l'envoie, retrying")
                 self.connect()
-        # else:
-        #     print ('Envoi ok.')
+                self.getPrediction(layout, bar, out, dice)
+        else:
+            print ('Envoi ok.')
 
         donnees = self.client.recv(4096)
-        # print ('Recu : {}'.format(donnees))
         prob = 0
         try:
             root = ET.fromstring(donnees)
+            if(root.tag == "Error"):
+                print("Error tag in response, retrying")
+                self.getPrediction(layout, bar, out, dice)
             for child in root:
-                print("Rank {}".format(child.attrib['rank']))
+
+                # print("Rank {}".format(child.attrib['rank']))
                 for moove in child:
                     if(moove.tag == "movePart"):
-                        print("{} -> {}".format(moove.attrib['from'], moove.attrib['to']))
+                        art=text2art("{} - {}".format(moove.attrib['from'], moove.attrib['to']))
+                        print(art)
+                        # print("{} -> {}".format(moove.attrib['from'], moove.attrib['to']))
                     if(moove.tag == "probabilities"):
                         if(child.attrib['rank'] == '1'):
                             prob = moove.attrib['greenWin']
@@ -91,6 +105,7 @@ class BgBlitzClient():
         except:
             print('error parsing in XML')
             self.connect()
+            self.getPrediction(layout, bar, out, dice)
             return None
 
 # print('Envoi de : ' + msg_test)
