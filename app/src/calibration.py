@@ -30,7 +30,7 @@ def match_keypoint(template, img, debug):
 
 def getGameBB(img):
     kps = []
-    template_gauche = cv2.imread('../data/test/menu.png', 0)
+    
     # kaze_match(img, template)
 
     img_full = img.copy()
@@ -55,10 +55,10 @@ def getGameBB(img):
 
     left_side = img[0:int(img.shape[0]/4), 0:int(img.shape[1]/4)]
 
+    template_gauche = cv2.imread('../data/test/menu_small.png', 0)
     kps.append(match_keypoint(template_gauche, left_side, "top_left"))
 
     template_droite = cv2.imread('../data/test/bas_droite.png', 0)
-    # kaze_match(img, template)
     kps.append(match_keypoint(template_droite, img_full, "bot_right"))
 
     # print(kps)
@@ -66,8 +66,8 @@ def getGameBB(img):
     top_left_pix = (0, kps[0][0][1])
     bot_right_pix = (kps[1][1][0] + BIAS_BOT_RIGHT, kps[1][1][1])
 
-    print("bot_right_pix list : ")
-    print(bot_right_pix)
+    print("top_left_pix list : ")
+    print(top_left_pix)
 
     return top_left_pix, bot_right_pix
 

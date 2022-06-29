@@ -44,9 +44,9 @@ if __name__ == "__main__":
     # haut_gauche, bas_droite = calibration(all_screen_img_path)
     # print("calibration haut_gauche at {}".format(haut_gauche))
     # print("calibration bas_droite at  {}".format(bas_droite))
-    _, bas_droite = calibration(all_screen_img_path)
+    haut_gauche, bas_droite = calibration(all_screen_img_path)
     # hardcode haut gauche for chrome
-    haut_gauche = (0, 270)
+    # haut_gauche = (0, 270)
     # bas_droite = (2172, 1975)
 
     width = (bas_droite[0] - haut_gauche[0]) / 2
